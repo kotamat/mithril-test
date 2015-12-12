@@ -6,6 +6,8 @@ sass = require 'gulp-sass'
 sourcemaps = require 'gulp-sourcemaps'
 livereload = require 'gulp-livereload'
 express = require 'express'
+fs = require 'fs'
+bodyParser = require 'body-parser'
 
 app = express()
 
@@ -47,6 +49,19 @@ gulp.task 'watch', ['build'], ->
     livereload.listen()
 
 gulp.task 'server', ->
+    app.use bodyParser.json()
+    app.get '/tasks', (req, res) ->
+        console.log 'get tasks'
+        try
+            res.send JSON.parse fs.readFileSync 'todo.json', 'utf8'
+        catch error
+            res.send []
+    app.post '/tasks', (req, res) ->
+        console.log 'post tasks'
+        fs.writeFileSync 'todo.json', JSON.stringify req.body
+        res.status 200
+            .end()
+
     app.use express.static 'client'
     console.log 'start listening at 8000'
     app.listen 8000

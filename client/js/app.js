@@ -6,28 +6,23 @@ Todo = function(data) {
 };
 
 Todo.list = function() {
-  var json, src, task, tasks;
-  tasks = [];
-  src = localStorage.getItem('todo');
-  if (src) {
-    json = JSON.parse(src);
-    tasks = (function() {
-      var i, len, results;
-      results = [];
-      for (i = 0, len = json.length; i < len; i++) {
-        task = json[i];
-        results.push(new Todo(task));
-      }
-      return results;
-    })();
-  }
-  return m.prop(tasks);
+  return m.request({
+    method: 'GET',
+    url: '/tasks',
+    type: Todo
+  });
 };
 
 Todo.save = function(todoList) {
-  return localStorage.setItem('todo', JSON.stringify(todoList.filter(function(todo) {
+  var data;
+  data = todoList.filter(function(todo) {
     return !todo.done();
-  })));
+  });
+  return m.request({
+    method: 'POST',
+    url: '/tasks',
+    data: data
+  });
 };
 
 vm = {

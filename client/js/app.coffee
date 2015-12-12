@@ -4,18 +4,18 @@ Todo = (data) ->
     return
 
 Todo.list = ->
-    tasks = []
-    src = localStorage.getItem 'todo'
-    if src
-        json = JSON.parse src
-        tasks = for task in json
-          new Todo task
-    m.prop tasks
+    m.request
+        method: 'GET'
+        url: '/tasks'
+        type: Todo
 
 Todo.save = (todoList) ->
-    localStorage.setItem 'todo',
-        JSON.stringify todoList.filter (todo) ->
-            !todo.done()
+    data = todoList.filter (todo) ->
+        !todo.done()
+    m.request
+        method: 'POST'
+        url: '/tasks'
+        data: data
 
 vm =
     init: ->
