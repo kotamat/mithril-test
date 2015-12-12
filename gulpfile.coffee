@@ -39,10 +39,11 @@ gulp.task 'css', ->
         .pipe gulp.dest './client/css'
 
 
-gulp.task 'watch', ['build', 'reload'], ->
+gulp.task 'watch', ['build'], ->
     gulp.watch files.coffee, ['js']
     gulp.watch files.scss, ['css']
 
+    gulp.watch ['client/**/*'], ['reload']
     livereload.listen()
 
 gulp.task 'server', ->
