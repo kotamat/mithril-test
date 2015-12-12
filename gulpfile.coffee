@@ -11,8 +11,8 @@ app = express()
 
 
 files =
-    coffee: './client/js/**/*.coffee'
-    scss  : './client/css/**/*.scss'
+    coffee: './client/js/*.coffee'
+    scss  : './client/css/*.scss'
 
 gulp.task 'reload', ->
     gulp.src ['client/*/*']
@@ -44,8 +44,8 @@ gulp.task 'watch', ['build', 'reload'], ->
     gulp.watch files.scss, ['css']
 
     livereload.listen()
-    gulp.watch ['client/*/*'], ['server']
 
+gulp.task 'server', ->
     app.use express.static 'client'
     console.log 'start listening at 8000'
     app.listen 8000
