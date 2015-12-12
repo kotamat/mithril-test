@@ -5,17 +5,47 @@ Todo = function(data) {
   this.done = m.prop(false);
 };
 
+Todo.list = function() {
+  var json, src, task, tasks;
+  tasks = [];
+  src = localStorage.getItem('todo');
+  if (src) {
+    json = JSON.parse(src);
+    tasks = (function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = json.length; i < len; i++) {
+        task = json[i];
+        results.push(new Todo(task));
+      }
+      return results;
+    })();
+  }
+  return m.prop(tasks);
+};
+
+Todo.save = function(todoList) {
+  return localStorage.setItem('todo', JSON.stringify(todoList.filter(function(todo) {
+    return !todo.done();
+  })));
+};
+
 vm = {
   init: function() {
-    vm.list = m.prop([]);
+    vm.list = Todo.list();
     vm.description = m.prop("");
-    return vm.add = function() {
+    vm.add = function() {
       if (vm.description()) {
         vm.list().push(new Todo({
           description: vm.description()
         }));
-        return vm.description("");
+        vm.description("");
+        return Todo.save(vm.list());
       }
+    };
+    return vm.check = function(value) {
+      this.done(value);
+      return Todo.save(vm.list());
     };
   }
 };
@@ -35,7 +65,7 @@ view = function() {
       return m('tr', [
         m('td', [
           m('input[type=checkbox]', {
-            onclick: m.withAttr('checked', task.done),
+            onclick: m.withAttr('checked', vm.check.bind(task)),
             value: task.done()
           })
         ]), m('td', {

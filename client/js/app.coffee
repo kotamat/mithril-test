@@ -3,15 +3,33 @@ Todo = (data) ->
     @done = m.prop false
     return
 
+Todo.list = ->
+    tasks = []
+    src = localStorage.getItem 'todo'
+    if src
+        json = JSON.parse src
+        tasks = for task in json
+          new Todo task
+    m.prop tasks
+
+Todo.save = (todoList) ->
+    localStorage.setItem 'todo',
+        JSON.stringify todoList.filter (todo) ->
+            !todo.done()
+
 vm =
     init: ->
-        vm.list = m.prop []
+        vm.list = Todo.list()
         vm.description = m.prop ""
         vm.add = ->
             if vm.description()
                 vm.list().push new Todo
                     description: vm.description()
                 vm.description ""
+                Todo.save vm.list()
+        vm.check = (value) ->
+            @done value
+            Todo.save vm.list()
 
 controller = ->
     vm.init()
@@ -28,7 +46,7 @@ view = ->
             m 'tr', [
                 m 'td', [
                     m 'input[type=checkbox]',
-                        onclick: m.withAttr 'checked', task.done
+                        onclick: m.withAttr 'checked', vm.check.bind task
                         value: task.done()
                 ]
                 m 'td',
