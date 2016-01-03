@@ -5,4 +5,16 @@ Todo = (data) ->
     @done = m.prop false
     return
 
+Todo.list = ->
+    m.request
+        method: 'GET'
+        url: '/tasks'
+        type: Todo
+
+Todo.save = (todoList) ->
+    m.request
+        method: 'POST'
+        url: '/tasks'
+        data: todoList
+
 module.exports = Todo
