@@ -5,7 +5,7 @@
   "main": "server.js",
   "dependencies": {
     "express": "^4.13.3",
-    "mithril": "^0.2.0"
+    "mithril": "^2.0.4"
   },
   "devDependencies": {
     "coffee-script": "^1.10.0",
